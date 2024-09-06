@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{parent()}} - Homepage{% endblock %}
+
+{% block body %}
+    <h1>Bienvenue sur la plateforme de déclaration d'incidents</h1>
+
+    <a class="btn btn-outline-primary" href="{{ path('app_incident_new') }}">Déclarer un incident</a>
+    <a class="btn btn-outline-warning" href="{{ path('app_incident_index') }}">Backoffice incidents</a>
+
+    {# read and display several types of flash messages #}
+    {% for label, messages in app.flashes(['success', 'warning']) %}
+        {% for message in messages %}
+            <div class="flash-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

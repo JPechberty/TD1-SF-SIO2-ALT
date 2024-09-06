@@ -1,0 +1,106 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} - Backoffice - Incident {{ incident.reference }}{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-12">
+            <h1> Incident Description</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            {# read and display several types of flash messages #}
+            {% for label, messages in app.flashes(['error']) %}
+                {% for message in messages %}
+                    <div class="flash-{{ label }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header h5">Incident {{ incident.reference }}</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-5">
+                            <dl class="row">
+                                <dt class="col-2">Status</dt>
+                                <dd class="col-10">
+                                    {% if incident.status.name == "NEW" %}
+                                        <span class="badge text-bg-info">{{ incident.status.value }}</span>
+                                    {% elseif incident.status.name == "PROCESSING" %}
+                                        <span class="badge text-bg-primary">{{ incident.status.value }}</span>
+                                    {% elseif incident.status.name == "RESOLVED" %}
+                                        <span class="badge text-bg-success">{{ incident.status.value }}</span>
+                                    {% elseif incident.status.name == "REJECTED" %}
+                                        <span class="badge text-bg-danger">{{ incident.status.value }}</span>
+                                    {% endif %}
+                                </dd>
+                                <dt class="col-2">Priorité</dt>
+                                <dd class="col-10">
+                                    {% if incident.priority.name  == "LOW" %}
+                                        <span class="badge text-bg-success">{{ incident.priority.value }}</span>
+                                    {% elseif incident.priority.name  == "MEDIUM" %}
+                                        <span class="badge text-bg-info">{{ incident.priority.value }}</span>
+                                    {% elseif incident.priority.name  == "HIGH" %}
+                                        <span class="badge text-bg-warning">{{ incident.priority.value }}</span>
+                                    {% elseif incident.priority.name  == "CRITIC" %}
+                                        <span class="badge text-bg-danger">{{ incident.priority.value }}</span>
+                                    {% endif %}
+                                </dd>
+                                <dt class="col-2">Réf</dt>
+                                <dd class="col-10">{{ incident.reference }}</dd>
+                                <dt class="col-2">Contact</dt>
+                                <dd class="col-10">{{ incident.reporterEmail }}</dd>
+                                <dt class="col-2">Types</dt>
+                                <dd class="col-10">{{ incident.types|map(t => t.value)|join(', ') }}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-4">
+                            <dl class="row">
+                                <dt class="col-4">Created at :</dt>
+                                <dd class="col-8">{{ incident.createdAt ? incident.createdAt|date('Y-m-d H:i:s') : '' }}</dd>
+                                <dt class="col-4">Processed at :</dt>
+                                <dd class="col-8">{{ incident.processedAt ? incident.processedAt|date('Y-m-d H:i:s') : '' }}</dd>
+                                <dt class="col-4">Resolved at :</dt>
+                                <dd class="col-8">{{ incident.resolvedAt ? incident.resolvedAt|date('Y-m-d H:i:s') : '' }}</dd>
+                                <dt class="col-4">Rejected At :</dt>
+                                <dd class="col-8">{{ incident.rejectedAt ? incident.rejectedAt|date('Y-m-d H:i:s') : '' }}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-3">
+                            <div class="vstack gap-3">
+                                {% if not incident.processedAt and not incident.rejectedAt %}
+                                    <a class="btn btn-outline-primary" href="#">Handle Incident</a>
+                                {% endif %}
+                                {% if incident.processedAt and not incident.resolvedAt and not incident.rejectedAt %}
+                                    <a class="btn btn-outline-success" href="#">Mark as resolved</a>
+                                {% endif %}
+
+                                {% if not incident.rejectedAt and not incident.resolvedAt %}
+                                    <a class="btn btn-outline-danger" href="#">Mark as rejected</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col">
+                            <p><strong>Description</strong></p>
+                            <p>{{ incident.description }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-center">
+                    <a class="btn btn-outline-secondary" href="{{ path('app_incident_index') }}">Back to list</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
